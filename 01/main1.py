@@ -47,7 +47,6 @@ def save_history(role, text, message, timestamp=None):
         f.write(json.dumps(entry, ensure_ascii=False) + "\n")
 
 # === GEMINI GENERATION ===
-# === GEMINI GENERATION ===
 
 def generate_response(user_message, message):
     history_text = load_history(message)
@@ -71,7 +70,7 @@ def generate_response(user_message, message):
     )
 
     system_content = types.Content(
-        role="user",  # Gemini does NOT support "system" role — must be "user"
+        role="user",  
         parts=[types.Part(text=SYSTEM_PROMPT)]
     )
 
@@ -119,5 +118,5 @@ def handle_message(message):
 # === RUN ===
 
 if __name__ == "__main__":
-    print("Alita-1.2 is running...✨")
+    print("Alita-v1 is running...✨")
     bot.infinity_polling()
