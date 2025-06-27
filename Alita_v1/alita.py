@@ -1,13 +1,15 @@
 import os
 import telebot
 import json
-from datetime import datetime, timezone
+from datetime import datetime
+from zoneinfo import ZoneInfo
 from google import genai
 from google.genai import types
 from config import TELEGRAM_TOKEN, GOOGLE_API_KEY, MODEL, SYSTEM_PROMPT
 
 # === CONFIG ===
 CHAT_HISTORY_DIR = "chat_history"
+DHAKA_TZ = ZoneInfo("Asia/Dhaka")
 
 if not os.path.exists(CHAT_HISTORY_DIR):
     os.makedirs(CHAT_HISTORY_DIR)
@@ -35,7 +37,7 @@ def save_history(role, text, message, timestamp=None):
     path = get_history_filepath(message)
 
     if timestamp is None:
-        timestamp = datetime.now(timezone.utc).isoformat()
+        timestamp = datetime.now(DHAKA_TZ).isoformat()
 
     entry = {
         "role": role,
@@ -94,11 +96,12 @@ def generate_response(user_message, message):
     ):
         response_text += chunk.text
 
-    current_time = datetime.fromtimestamp(message.date, timezone.utc).isoformat()
+    current_time = datetime.fromtimestamp(message.date, DHAKA_TZ).isoformat()
     save_history("user", user_message, message, timestamp=current_time)
     save_history("model", response_text, message)
 
     return response_text.strip()
+
 # === TELEGRAM HANDLER ===
 
 @bot.message_handler(func=lambda message: True)
